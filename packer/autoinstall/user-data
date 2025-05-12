@@ -1,0 +1,88 @@
+#cloud-config
+autoinstall:
+  version: 1
+  source:
+    id: ubuntu-server-minimal
+  locale: en_US.UTF-8
+  timezone: America/Chicago
+  keyboard:
+    layout: us
+    variant: intl
+  network:
+    version: 2
+    ethernets:
+      ens18:
+        dhcp4: true
+  packages:
+    - qemu-guest-agent
+    - vim
+    - git
+    - htop
+  updates: all
+  shutdown: reboot
+  identity:
+    realname: 'Proxmox User'
+    username: pve
+    hostname: norn
+    password: '$6$gmEcdgIdxZd8zKdd$...'
+  ssh:
+    install-server: true
+    authorized-keys:
+      - ssh-ed25519 AA...
+    allow-pw: false
+  late-commands:
+    - echo 'pve ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/90-pve
+  storage:
+    swap:
+      size: 0
+    config:
+      - type: disk
+        id: disk0
+        path: /dev/sda
+        ptable: gpt
+        wipe: superblock-recursive
+        preserve: false
+        grub_device: true
+      - type: partition
+        id: bios_boot
+        device: disk0
+        size: 1M
+        flag: bios_grub
+      - type: partition
+        id: boot
+        device: disk0
+        size: 2G
+        flag: boot
+      - type: partition
+        id: lvm_partition
+        device: disk0
+        size: -1
+        wipe: superblock
+        preserve: false
+      - type: lvm_volgroup
+        id: ubuntu-vg
+        name: ubuntu-vg
+        devices:
+          - lvm_partition
+      - type: lvm_partition
+        id: lv-root
+        name: ubuntu-lv
+        volgroup: ubuntu-vg
+        size: 100%
+      - type: format
+        id: boot-format
+        fstype: ext4
+        volume: boot
+      - type: format
+        id: root-format
+        fstype: ext4
+        volume: lv-root
+      - type: mount
+        id: boot-mount
+        path: /boot
+        device: boot-format
+      - type: mount
+        id: root-mount
+        path: /
+        device: root-format
+

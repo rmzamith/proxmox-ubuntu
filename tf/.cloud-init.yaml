@@ -1,0 +1,8 @@
+#cloud-config
+packages:
+  - curl
+  - jq
+  - htop
+
+runcmd:
+  - echo "Cloud-init setup complete"

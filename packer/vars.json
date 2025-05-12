@@ -1,0 +1,6 @@
+{
+	"proxmox_node": "pve",
+	"proxmox_vm_storage_pool": "local-lvm",
+	"proxmox_iso_storage_pool": "local",
+	"ssh_private_key_path": "~/.ssh/id_ed25519"
+}

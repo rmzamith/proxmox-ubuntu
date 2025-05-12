@@ -1,0 +1,5 @@
+*.env
+tf/*.tfstate*
+tf/*.tfplan
+tf/.terraform/
+packer/downloaded_iso_path/
